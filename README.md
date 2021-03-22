@@ -1,1 +1,3 @@
 # Pacman
+
+Un jeu de Pacman pour m'amuser...
