@@ -7,7 +7,13 @@ let app = {
     init: () => {
         boardApp.init();
         app.createPacman();
-        setTimeout(app.moveForward, 1000);
+        document.addEventListener('keyup', app.handleTurn);
+        document.addEventListener('keyup', evt => {
+            if (evt.code === 'Space') {
+                app.moveForward();
+            }
+        });
+        // setTimeout(app.moveForward, 1000);
         // setInterval(app.moveForward, 1000);
     },
 
@@ -49,6 +55,18 @@ let app = {
         app.pacman = newPacman;
     },
 
+    handleTurn: (evt) => {
+        if (evt.key === 'ArrowUp') {
+            app.turnUp();
+        } else if (evt.key === 'ArrowDown') {
+            app.turnDown();
+        } else if (evt.key === 'ArrowRight') {
+            app.turnRight();
+        } else if (evt.key === 'ArrowLeft') {
+            app.turnLeft();
+        }
+    },
+
     turnUp: () => {
         pacman.classList.remove('pacman-down', 'pacman-right','pacman-left')
         pacman.classList.add('pacman-up');
@@ -72,7 +90,6 @@ let app = {
         pacman.classList.add('pacman-left');
         app.direction = 'left';
     }
-
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
