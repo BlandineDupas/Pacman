@@ -27,11 +27,27 @@ let app = {
         let newPacman;
 
         if (app.pacman.classList.contains('pacman-left')) {
-            newPacman = app.pacman.previousSibling;
+            // Can't go out of board but can pass to the other side
+            if (!app.pacman.previousSibling) {
+                // find the last div of the current row
+                let colNb = Object.values(app.pacman.closest('.row').lastChild.classList).find(className => className.match(/^col[0-9]+$/));
+                let rowNb = app.pacman.closest('.row').id;
+                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
+            } else {
+                newPacman = app.pacman.previousSibling;
+            }
         }
         
         else if (app.pacman.classList.contains('pacman-right')) {
-            newPacman = app.pacman.nextSibling;
+            // Can't go out of board but can pass to the other side
+            if (!app.pacman.nextSibling) {
+                // find the first div of the current row
+                let colNb = Object.values(app.pacman.closest('.row').firstChild.classList).find(className => className.match(/^col[0-9]+$/));
+                let rowNb = app.pacman.closest('.row').id;
+                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
+            } else {
+                newPacman = app.pacman.nextSibling;
+            }
         }
         
         else if (app.pacman.classList.contains('pacman-up')) {
@@ -46,13 +62,16 @@ let app = {
             newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
         }
 
-        app.pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right','pacman-left');
-        app.pacman.removeAttribute('id');
+        // Can't walk on a wall
+        if (!newPacman.classList.contains('wall')) {
+            app.pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right','pacman-left');
+            app.pacman.removeAttribute('id');
 
-        newPacman.classList.add('pacman-' + app.direction);
-        newPacman.setAttribute('id', 'pacman');
+            newPacman.classList.add('pacman-' + app.direction);
+            newPacman.setAttribute('id', 'pacman');
 
-        app.pacman = newPacman;
+            app.pacman = newPacman;
+        }
     },
 
     handleTurn: (evt) => {
