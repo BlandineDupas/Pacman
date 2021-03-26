@@ -2,19 +2,24 @@ let app = {
     // Properties
     pacman: null,
     direction: 'left',
+    forwardInterval: null,
+    score: 0,
+    scoreSpan: document.getElementById('score'),
+    nbFood: null,
 
     // Methods
     init: () => {
         boardApp.init();
+        app.updateNbFood();;
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
-        document.addEventListener('keyup', evt => {
+        /*document.addEventListener('keyup', evt => {
             if (evt.code === 'Space') {
                 app.moveForward();
             }
-        });
+        });*/
         // setTimeout(app.moveForward, 1000);
-        // setInterval(app.moveForward, 1000);
+        app.forwardInterval = setInterval(app.moveForward, 500);
     },
 
     createPacman: () => {
@@ -24,6 +29,10 @@ let app = {
     },
 
     moveForward: () => {
+        if (app.pacman.firstChild && app.pacman.firstChild.classList.contains('food')) {
+            app.eatFood();
+        }
+
         let newPacman;
 
         if (app.pacman.classList.contains('pacman-left')) {
@@ -71,7 +80,34 @@ let app = {
             newPacman.setAttribute('id', 'pacman');
 
             app.pacman = newPacman;
+        } else { // prevents unnecessary treatment
+            clearInterval(app.forwardInterval);
         }
+    },
+
+    eatFood: () => {
+        app.score += 10;
+        app.pacman.firstChild.remove();
+        
+        app.updateScore();
+        app.updateNbFood();
+    },
+
+    updateScore: () => {
+        app.scoreSpan.textContent = app.score;
+    },
+
+    updateNbFood: () => {
+        app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
+        if (app.nbFood === 0) {
+            console.log('gagné')
+            app.displayWinMessage();
+        }
+    },
+
+    displayWinMessage: () => {
+        clearInterval(app.forwardInterval);
+        document.getElementById('winMessage').classList.remove('d-none');
     },
 
     handleTurn: (evt) => {
@@ -84,6 +120,10 @@ let app = {
         } else if (evt.key === 'ArrowLeft') {
             app.turnLeft();
         }
+        // clear to prevents addition of intervals
+        clearInterval(app.forwardInterval);
+        // relaunch interval (necessary when a wall stopped it)
+        app.forwardInterval = setInterval(app.moveForward, 500);
     },
 
     turnUp: () => {
