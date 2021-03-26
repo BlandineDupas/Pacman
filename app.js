@@ -2,19 +2,20 @@ let app = {
     // Properties
     pacman: null,
     direction: 'left',
+    forwardInterval: null,
 
     // Methods
     init: () => {
         boardApp.init();
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
-        document.addEventListener('keyup', evt => {
+        /*document.addEventListener('keyup', evt => {
             if (evt.code === 'Space') {
                 app.moveForward();
             }
-        });
+        });*/
         // setTimeout(app.moveForward, 1000);
-        // setInterval(app.moveForward, 1000);
+        app.forwardInterval = setInterval(app.moveForward, 500);
     },
 
     createPacman: () => {
@@ -71,6 +72,8 @@ let app = {
             newPacman.setAttribute('id', 'pacman');
 
             app.pacman = newPacman;
+        } else { // prevents unnecessary treatment
+            clearInterval(app.forwardInterval);
         }
     },
 
@@ -84,6 +87,10 @@ let app = {
         } else if (evt.key === 'ArrowLeft') {
             app.turnLeft();
         }
+        // clear to prevents addition of intervals
+        clearInterval(app.forwardInterval);
+        // relaunch interval (necessary when a wall stopped it)
+        app.forwardInterval = setInterval(app.moveForward, 500);
     },
 
     turnUp: () => {
