@@ -29,16 +29,20 @@ header p {
 
 #winMessage {
     position: fixed;
-    width: 100vw;
-    height: 100vh;
+    left: 30%;
+    top: 30%;
+    width: 40vw;
+    height: 40vh;
     background-color: rgba(47, 125, 177, 0.582);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-bottom: 20%;
+    /* padding-bottom: 20%; */
     font-weight: bold;
     font-size: 3em;
     color: yellow;
+    border: 3px solid yellow;
+    border-radius: 20px;
 }
 
 #winMessage p {
@@ -47,6 +51,18 @@ header p {
 
 #winMessage.d-none {
     display: none;
+}
+
+#exit {
+    font-size: 1rem;
+    color: red;
+    position: absolute;
+    bottom: 0.2%;
+    right: 5%;
+}
+
+#exit:hover {
+    text-decoration: underline;
 }
 
 #board {

@@ -6,6 +6,7 @@ let app = {
     score: 0,
     scoreSpan: document.getElementById('score'),
     nbFood: null,
+    speed: 150,
 
     // Methods
     init: () => {
@@ -13,13 +14,7 @@ let app = {
         app.updateNbFood();;
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
-        /*document.addEventListener('keyup', evt => {
-            if (evt.code === 'Space') {
-                app.moveForward();
-            }
-        });*/
-        // setTimeout(app.moveForward, 1000);
-        app.forwardInterval = setInterval(app.moveForward, 500);
+        app.forwardInterval = setInterval(app.moveForward, app.speed);
     },
 
     createPacman: () => {
@@ -100,7 +95,6 @@ let app = {
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
-            console.log('gagné')
             app.displayWinMessage();
         }
     },
@@ -108,6 +102,26 @@ let app = {
     displayWinMessage: () => {
         clearInterval(app.forwardInterval);
         document.getElementById('winMessage').classList.remove('d-none');
+        let exitCross = document.getElementById('exit');
+        exitCross.addEventListener('click', app.restart);
+    },
+
+    restart: () => {
+        // hide win message
+        document.getElementById('winMessage').classList.add('d-none');
+        
+        // suppress pacman
+        document.getElementById('pacman').classList.add('pacman-left');
+        document.getElementById('pacman').removeAttribute('id');
+
+        // restart initial direction, interval, score
+        app.direction = 'left';
+        app.forwardInterval = null;
+        app.score = 0;
+        app.updateScore;
+        app.nbFood = null;
+
+        app.init();
     },
 
     handleTurn: (evt) => {
@@ -123,7 +137,7 @@ let app = {
         // clear to prevents addition of intervals
         clearInterval(app.forwardInterval);
         // relaunch interval (necessary when a wall stopped it)
-        app.forwardInterval = setInterval(app.moveForward, 500);
+        app.forwardInterval = setInterval(app.moveForward, app.speed);
     },
 
     turnUp: () => {
