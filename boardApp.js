@@ -1,4 +1,4 @@
-let pacman = {
+let boardApp = {
     // Properties
     board: document.getElementById('board'),
     map: datas.map,
@@ -6,7 +6,7 @@ let pacman = {
     // Methods
     // Methods
     init: function () {
-        pacman.loadBoard();
+        boardApp.loadBoard();
     },
 
     createWall: function () {
@@ -28,34 +28,32 @@ let pacman = {
     },
 
     loadBoard: function () {
-        for (let rowIndex = 0 ; rowIndex < pacman.map.length ; rowIndex++) {
-            // console.log(i, pacman.map[i]);
-            let rowMapStr = pacman.map[rowIndex];
-            let rowLength = pacman.map[rowIndex].length;
+        for (let rowIndex = 0 ; rowIndex < boardApp.map.length ; rowIndex++) {
+            // console.log(i, boardApp.map[i]);
+            let rowMapStr = boardApp.map[rowIndex];
+            let rowLength = boardApp.map[rowIndex].length;
             let newRow = document.createElement('div');
             newRow.classList.add('row');
-            pacman.board.appendChild(newRow);
+            boardApp.board.appendChild(newRow);
             
             for (let columnIndex = 0; columnIndex < rowLength; columnIndex++) {
                 // console.log(rowMapStr[columnIndex]);
                 if (rowMapStr[columnIndex] === 'w') {
                     // console.log('wall');
-                    let newWall = pacman.createWall();
+                    let newWall = boardApp.createWall();
                     newRow.appendChild(newWall);
                 } else if (rowMapStr[columnIndex] === 'r') {
                     // console.log('road');
-                    let newRoad = pacman.createRoad();
+                    let newRoad = boardApp.createRoad();
                     newRow.appendChild(newRoad);
                 } if (rowMapStr[columnIndex] === 'f') {
                     // console.log('food');
-                    let newRoad = pacman.createRoad();
+                    let newRoad = boardApp.createRoad();
                     newRow.appendChild(newRoad);
-                    let newFood = pacman.createFood();
+                    let newFood = boardApp.createFood();
                     newRoad.appendChild(newFood);
                 }
             }
         }
     }
 }
-
-document.addEventListener('DOMContentLoaded', pacman.init);
