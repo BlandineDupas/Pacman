@@ -2,9 +2,12 @@ body {
     text-align: center;
 }
 
+main {
+    display: flex;
+}
+
 div {
     box-sizing: border-box;
-    padding: 2%;
 }
 
 #board {
@@ -12,16 +15,21 @@ div {
     height: 800px;
     background-color: black;
     margin: auto;
-    display: flex;
+    /* display: flex; */
     flex-wrap: wrap;
     /* align-items: flex-start; */
     align-content: center;
     padding: 1rem;
 }
 
-#board > div {
-    width: 5.26%;
+.row {
     height: 4.8%;
+    display: flex;
+}
+
+.row > div {
+    width: 5.26%;
+    padding: 2%;
 }
 
 .wall {

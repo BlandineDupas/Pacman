@@ -4,27 +4,21 @@ let pacman = {
     map: datas.map,
 
     // Methods
+    // Methods
     init: function () {
         pacman.loadBoard();
     },
 
-    createWall: function (number) {
-        for (let i = 0; i < number ; i++) {
-            let newWall = document.createElement('div');
-            newWall.classList.add('wall');
-            pacman.board.appendChild(newWall);
-        }
+    createWall: function () {
+        let newWall = document.createElement('div');
+        newWall.classList.add('wall');
+        return newWall;
     },
 
-    createRoad: function (number, empty = false) {
-        for (let i = 0; i < number ; i++) {
-            let newRoad = document.createElement('div');
-            newRoad.classList.add('road');
-            pacman.board.appendChild(newRoad);
-            if (!empty) {
-                newRoad.appendChild(pacman.createFood());
-            }
-        }
+    createRoad: function () {
+        let newRoad = document.createElement('div');
+        newRoad.classList.add('road');
+        return newRoad;
     },
 
     createFood: function () {
@@ -34,15 +28,31 @@ let pacman = {
     },
 
     loadBoard: function () {
-        console.log(pacman.map[0].number);
-        for (let i = 0 ; i < pacman.map.length ; i++) {
-            console.log(i);
-            if (pacman.map[i].type === "wall") {
-                pacman.createWall(pacman.map[i].number);
-                console.log(pacman.map[i]['number']);
-            } else if (pacman.map[i].type === "road") {
-                pacman.createRoad(pacman.map[i].number, pacman.map[i].empty);
-                console.log(pacman.map[i].number);
+        for (let rowIndex = 0 ; rowIndex < pacman.map.length ; rowIndex++) {
+            // console.log(i, pacman.map[i]);
+            let rowMapStr = pacman.map[rowIndex];
+            let rowLength = pacman.map[rowIndex].length;
+            let newRow = document.createElement('div');
+            newRow.classList.add('row');
+            pacman.board.appendChild(newRow);
+            
+            for (let columnIndex = 0; columnIndex < rowLength; columnIndex++) {
+                // console.log(rowMapStr[columnIndex]);
+                if (rowMapStr[columnIndex] === 'w') {
+                    // console.log('wall');
+                    let newWall = pacman.createWall();
+                    newRow.appendChild(newWall);
+                } else if (rowMapStr[columnIndex] === 'r') {
+                    // console.log('road');
+                    let newRoad = pacman.createRoad();
+                    newRow.appendChild(newRoad);
+                } if (rowMapStr[columnIndex] === 'f') {
+                    // console.log('food');
+                    let newRoad = pacman.createRoad();
+                    newRow.appendChild(newRoad);
+                    let newFood = pacman.createFood();
+                    newRoad.appendChild(newFood);
+                }
             }
         }
     }
