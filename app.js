@@ -3,10 +3,21 @@ let app = {
     pacman: null,
     direction: 'left',
     forwardInterval: null,
+    timerInterval: null,
     score: 0,
-    scoreSpan: document.getElementById('score'),
+    scoreSpan: document.querySelector('#score span'),
     nbFood: null,
     speed: 150,
+    timer: {
+        'minutes': 0,
+        'seconds': 0,
+    },
+    timerSpan: document.querySelector('#timer span'),
+
+    // TODO faire un timer en plus du score, en haut à gauche par ex
+    // TODO créer un fantôme
+    // TODO gérer des mouvements aléatoires de fantôme
+    // TODO améliorer le design
 
     // Methods
     init: () => {
@@ -14,6 +25,8 @@ let app = {
         app.updateNbFood();;
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
+        app.timerSpan.textContent = '0:00';
+        app.timerInterval = setInterval(app.updateTimer, 1000);
         app.forwardInterval = setInterval(app.moveForward, app.speed);
     },
 
@@ -92,6 +105,23 @@ let app = {
         app.scoreSpan.textContent = app.score;
     },
 
+    updateTimer: () => {
+        console.log(app.timer.seconds);
+
+        if (app.timer.seconds < 59) {
+            app.timer.seconds++;
+            console.log(app.timer.seconds);
+        } else {
+            app.timer.seconds = 0;
+            app.timer.minutes++;
+        }
+        if (app.timer.seconds < 10) {
+            app.timerSpan.textContent = app.timer.minutes + ':0' + app.timer.seconds;
+        } else {
+            app.timerSpan.textContent = app.timer.minutes + ':' + app.timer.seconds;
+        }
+    },
+
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
@@ -101,7 +131,9 @@ let app = {
 
     displayWinMessage: () => {
         clearInterval(app.forwardInterval);
+        clearInterval(app.timerInterval);
         document.getElementById('winMessage').classList.remove('d-none');
+
         let exitCross = document.getElementById('exit');
         exitCross.addEventListener('click', app.restart);
     },
@@ -117,10 +149,15 @@ let app = {
         // restart initial direction, interval, score
         app.direction = 'left';
         app.forwardInterval = null;
+        app.timerInterval = null;
         app.score = 0;
         app.updateScore;
         app.nbFood = null;
-
+        app.timer = {
+            'minutes': 0,
+            'seconds': 0,
+        };
+    
         app.init();
     },
 
