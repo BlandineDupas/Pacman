@@ -1,4 +1,4 @@
-let movements = {
+let movementsApp = {
     // Properties
 
     // Methods
@@ -6,12 +6,7 @@ let movements = {
         //
     },
 
-    moveForward: (target) => {
-        // TODO eatFood only for Pacman
-        if (target.firstChild && target.firstChild.classList.contains('food')) {
-            app.eatFood();
-        }
-
+    moveForward: (target, targetDirection, targetInterval, targetId) => {
         let newTarget;
 
         if (target.classList.contains('to-left')) {
@@ -55,15 +50,12 @@ let movements = {
             target.classList.remove('to-top', 'to-bottom', 'to-right','to-left');
             target.removeAttribute('id');
 
-            // TODO gérer la direction pour le pacman et chaque fantôme
-            newTarget.classList.add('to-' + app.direction);
-            // TODO id ghost vs pacman
-            newTarget.setAttribute('id', 'pacman');
+            newTarget.classList.add('to-' + targetDirection);
+            newTarget.setAttribute('id', targetId);
 
             return newTarget;
         } else { // prevents unnecessary treatment
-            // TODO intervales pour les fantômes vs le pacman
-            clearInterval(app.forwardInterval);
+            clearInterval(targetInterval);
             return target;
         }
     },
@@ -71,28 +63,28 @@ let movements = {
     turnTop: (target) => {
         target.classList.remove('to-bottom', 'to-right','to-left')
         target.classList.add('to-top');
-        // TODO
-        app.direction = 'top';
+
+        return 'top';
     },
 
     turnBottom: (target) => {
         target.classList.remove('to-top', 'to-right','to-left')
         target.classList.add('to-bottom');
-        // TODO
-        app.direction = 'bottom';
+
+        return 'bottom';
     },
 
     turnRight: (target) => {
         target.classList.remove('to-top', 'to-bottom','to-left')
         target.classList.add('to-right');
-        // TODO
-        app.direction = 'right';
+ 
+        return 'right';
     },
 
     turnLeft: (target) => {
         target.classList.remove('to-top', 'to-bottom', 'to-right')
         target.classList.add('to-left');
-        // TODO
-        app.direction = 'left';
+  
+        return 'left';
     }
 }
