@@ -127,19 +127,23 @@ header h1 {
     color: red;
 }
   
-.pacman-up {
+.to-top {
     transform: rotate(-90deg);
 }
 
-.pacman-down {
+.to-bottom {
     transform: rotate(90deg);
 }
 
-.pacman-left {
+.to-left {
     transform: rotate(180deg);
 }
 
-.pacman-right {
+.to-right {
     transform: rotate(0deg);
+}
+
+#ghost {
+    background-color: red;
 }
 

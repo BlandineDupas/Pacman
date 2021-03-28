@@ -13,6 +13,8 @@ let app = {
         'seconds': 0,
     },
     timerSpan: document.querySelector('#timer span'),
+    testInterval: null,
+    test: 0,
 
     // TODO créer un fantôme
     // TODO gérer des mouvements aléatoires de fantôme
@@ -21,18 +23,23 @@ let app = {
     // Methods
     init: () => {
         boardApp.init();
-        app.updateNbFood();;
+        ghosts.init();
+        app.updateNbFood();
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
         app.timerSpan.textContent = '0:00';
         app.timerInterval = setInterval(app.updateTimer, 1000);
-        app.forwardInterval = setInterval(app.moveForward, app.speed);
+        app.forwardInterval = setInterval(app.pacmanMove, app.speed);
+    },
+
+    pacmanMove: () => {
+        app.pacman = movements.moveForward(app.pacman);
     },
 
     createPacman: () => {
         app.pacman = document.querySelector('#row15 .col9');
         app.pacman.setAttribute('id', 'pacman');
-        app.pacman.classList.add('pacman-left');
+        app.pacman.classList.add('to-left');
     },
 
     eatFood: () => {
@@ -48,11 +55,8 @@ let app = {
     },
 
     updateTimer: () => {
-        console.log(app.timer.seconds);
-
         if (app.timer.seconds < 59) {
             app.timer.seconds++;
-            console.log(app.timer.seconds);
         } else {
             app.timer.seconds = 0;
             app.timer.minutes++;
@@ -85,7 +89,7 @@ let app = {
         document.getElementById('winMessage').classList.add('d-none');
         
         // suppress pacman
-        document.getElementById('pacman').classList.add('pacman-left');
+        document.getElementById('pacman').classList.add('to-left');
         document.getElementById('pacman').removeAttribute('id');
 
         // restart initial direction, interval, score
@@ -105,19 +109,21 @@ let app = {
 
     handleTurn: (evt) => {
         if (evt.key === 'ArrowUp') {
-            app.turnUp();
+            movements.turnTop(app.pacman);
         } else if (evt.key === 'ArrowDown') {
-            app.turnDown();
+            movements.turnBottom(app.pacman);
         } else if (evt.key === 'ArrowRight') {
-            app.turnRight();
+            movements.turnRight(app.pacman);
         } else if (evt.key === 'ArrowLeft') {
-            app.turnLeft();
+            movements.turnLeft(app.pacman);
         }
         // clear to prevents addition of intervals
         clearInterval(app.forwardInterval);
         // relaunch interval (necessary when a wall stopped it)
-        app.forwardInterval = setInterval(app.moveForward, app.speed);
-    }
+        // app.forwardInterval = setInterval(app.moveForward, app.speed);
+        app.forwardInterval = setInterval(app.pacmanMove, app.speed);
+
+    },
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
