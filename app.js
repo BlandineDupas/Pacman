@@ -13,8 +13,9 @@ let app = {
         'seconds': 0,
     },
     timerSpan: document.querySelector('#timer span'),
+    testInterval: null,
+    test: 0,
 
-    // TODO faire un timer en plus du score, en haut à gauche par ex
     // TODO créer un fantôme
     // TODO gérer des mouvements aléatoires de fantôme
     // TODO améliorer le design
@@ -22,75 +23,50 @@ let app = {
     // Methods
     init: () => {
         boardApp.init();
-        app.updateNbFood();;
+        ghosts.init();
+        app.updateNbFood();
         app.createPacman();
         document.addEventListener('keyup', app.handleTurn);
         app.timerSpan.textContent = '0:00';
-        app.timerInterval = setInterval(app.updateTimer, 1000);
-        app.forwardInterval = setInterval(app.moveForward, app.speed);
+        // app.timerInterval = setInterval(app.updateTimer, 1000);
+        // app.forwardInterval = setInterval(movements.moveForward, app.speed, app.pacman);
+        // app.forwardInterval = setInterval(app.pacmanMove, app.speed, app.updatePacman);
+
+        app.forwardInterval = setInterval(app.pacmanMove, app.speed);
+
+        // app.testInterval = setInterval(app.testing, 1000, app.testing2);
     },
+
+    testing: (test) => {
+        let value = test();
+        console.log('testing', value);
+    },
+
+    testing2: () => {
+        app.test++
+        console.log('testing2', app.test);
+        return app.test;
+    },
+
+    pacmanMove: () => {
+        app.pacman = movements.moveForward(app.pacman);
+        console.log('pacmanMove :', app.pacman)
+    },
+
+    /*pacmanMove: (update) => {
+        let pac = update();
+        console.log(pac);
+    },
+
+    updatePacman: () => {
+        app.pacman = movements.moveForward(app.pacman);
+        return app.pacman;
+    },*/
 
     createPacman: () => {
         app.pacman = document.querySelector('#row15 .col9');
         app.pacman.setAttribute('id', 'pacman');
-        app.pacman.classList.add('pacman-left');
-    },
-
-    moveForward: () => {
-        if (app.pacman.firstChild && app.pacman.firstChild.classList.contains('food')) {
-            app.eatFood();
-        }
-
-        let newPacman;
-
-        if (app.pacman.classList.contains('pacman-left')) {
-            // Can't go out of board but can pass to the other side
-            if (!app.pacman.previousSibling) {
-                // find the last div of the current row
-                let colNb = Object.values(app.pacman.closest('.row').lastChild.classList).find(className => className.match(/^col[0-9]+$/));
-                let rowNb = app.pacman.closest('.row').id;
-                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-            } else {
-                newPacman = app.pacman.previousSibling;
-            }
-        }
-        
-        else if (app.pacman.classList.contains('pacman-right')) {
-            // Can't go out of board but can pass to the other side
-            if (!app.pacman.nextSibling) {
-                // find the first div of the current row
-                let colNb = Object.values(app.pacman.closest('.row').firstChild.classList).find(className => className.match(/^col[0-9]+$/));
-                let rowNb = app.pacman.closest('.row').id;
-                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-            } else {
-                newPacman = app.pacman.nextSibling;
-            }
-        }
-        
-        else if (app.pacman.classList.contains('pacman-up')) {
-            let colNb = Object.values(app.pacman.classList).find(className => className.match(/^col[0-9]+$/));
-            let rowNb = app.pacman.closest('.row').previousSibling.id;
-            newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-        }
-        
-        else if (app.pacman.classList.contains('pacman-down')) {
-            let colNb = Object.values(app.pacman.classList).find(className => className.match(/^col[0-9]+$/));
-            let rowNb = app.pacman.closest('.row').nextSibling.id;
-            newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-        }
-
-        // Can't walk on a wall
-        if (!newPacman.classList.contains('wall')) {
-            app.pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right','pacman-left');
-            app.pacman.removeAttribute('id');
-
-            newPacman.classList.add('pacman-' + app.direction);
-            newPacman.setAttribute('id', 'pacman');
-
-            app.pacman = newPacman;
-        } else { // prevents unnecessary treatment
-            clearInterval(app.forwardInterval);
-        }
+        app.pacman.classList.add('to-left');
     },
 
     eatFood: () => {
@@ -143,7 +119,7 @@ let app = {
         document.getElementById('winMessage').classList.add('d-none');
         
         // suppress pacman
-        document.getElementById('pacman').classList.add('pacman-left');
+        document.getElementById('pacman').classList.add('to-left');
         document.getElementById('pacman').removeAttribute('id');
 
         // restart initial direction, interval, score
@@ -163,43 +139,21 @@ let app = {
 
     handleTurn: (evt) => {
         if (evt.key === 'ArrowUp') {
-            app.turnUp();
+            movements.turnTop(app.pacman);
         } else if (evt.key === 'ArrowDown') {
-            app.turnDown();
+            movements.turnBottom(app.pacman);
         } else if (evt.key === 'ArrowRight') {
-            app.turnRight();
+            movements.turnRight(app.pacman);
         } else if (evt.key === 'ArrowLeft') {
-            app.turnLeft();
+            movements.turnLeft(app.pacman);
         }
         // clear to prevents addition of intervals
         clearInterval(app.forwardInterval);
         // relaunch interval (necessary when a wall stopped it)
-        app.forwardInterval = setInterval(app.moveForward, app.speed);
-    },
+        // app.forwardInterval = setInterval(app.moveForward, app.speed);
+        app.forwardInterval = setInterval(app.pacmanMove, app.speed);
 
-    turnUp: () => {
-        pacman.classList.remove('pacman-down', 'pacman-right','pacman-left')
-        pacman.classList.add('pacman-up');
-        app.direction = 'up';
     },
-
-    turnDown: () => {
-        pacman.classList.remove('pacman-up', 'pacman-right','pacman-left')
-        pacman.classList.add('pacman-down');
-        app.direction = 'down';
-    },
-
-    turnRight: () => {
-        pacman.classList.remove('pacman-up', 'pacman-down','pacman-left')
-        pacman.classList.add('pacman-right');
-        app.direction = 'right';
-    },
-
-    turnLeft: () => {
-        pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right')
-        pacman.classList.add('pacman-left');
-        app.direction = 'left';
-    }
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
