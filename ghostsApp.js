@@ -7,7 +7,7 @@ let ghostsApp = {
     // Methods
     init: () => {
         ghostsApp.createGhost();
-        // ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
+        ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
     },
     
     createGhost: () => {
@@ -58,13 +58,13 @@ let ghostsApp = {
 
         // if left cell isn't a wall
         leftCell = target.previousSibling;
-        if (leftCell.classList.contains('road')) {
+        if (!leftCell || leftCell.classList.contains('road')) {
             allowedDirections.push('left');
         }
 
         // if right cell isn't a wall
         rightCell = target.nextSibling;
-        if (rightCell.classList.contains('road')) {
+        if (!rightCell || rightCell.classList.contains('road')) {
             allowedDirections.push('right');
         }
 
