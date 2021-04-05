@@ -7,7 +7,7 @@ let ghostsApp = {
     // Methods
     init: () => {
         ghostsApp.createGhost();
-        ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
+        // ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
     },
     
     createGhost: () => {
@@ -16,98 +16,111 @@ let ghostsApp = {
         ghostsApp.ghost.classList.add('to-left');
     },
 
+    /**
+     * Check the road
+     * Determine new direction with probabilities
+     * Turn if necessary
+     * Move forward
+     */
     ghostMove: () => {
-        ghostsApp.checkRoad(ghostsApp.ghost);
-        let newGhost = movementsApp.moveForward(ghostsApp.ghost, ghostsApp.direction, ghostsApp.forwardInterval, 'ghost');
-        if (ghostsApp.ghost === newGhost) {
-            console.log('normalement c\'est un mur');
-
-            // ghostsApp.direction = movementsApp.turnBottom(ghostsApp.ghost);
-            // clear to prevents addition of intervals
-            clearInterval(ghostsApp.forwardInterval);
-            // relaunch interval (necessary when a wall stopped it)
-            ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
-        } else {
-            ghostsApp.ghost = newGhost;
-            console.log('else');
+        const allowedDirections = ghostsApp.checkRoad(ghostsApp.ghost);
+        const newDirection = ghostsApp.determinesProbability(allowedDirections);
+        if (newDirection != ghostsApp.direction) {
+            ghostsApp.direction = movementsApp.turn(ghostsApp.ghost, newDirection);
         }
-    },
-
-    checkRoad: (target) => {
-        let allowedDirections = [];
-        // Si la case du dessus n'est pas un mur
-        let colNb = Object.values(target.classList).find(className => className.match(/^col[0-9]+$/));
-        let rowNb = target.closest('.row').previousSibling.id;
-        topCell = document.querySelector('#' + rowNb + ' .' + colNb);
-        if (topCell.classList.contains('road')) {
-            // x chances de turnTop
-            // console.log('ghost peut monter');
-            allowedDirections.push('top');
-            // clearInterval(ghostsApp.forwardInterval);
-        }
-        // Si la case du dessous n'est pas un mur
-        colNb = Object.values(target.classList).find(className => className.match(/^col[0-9]+$/));
-        rowNb = target.closest('.row').nextSibling.id;
-        bottomCell = document.querySelector('#' + rowNb + ' .' + colNb);
-        if (bottomCell.classList.contains('road')) {
-            // x chances de turnBottom
-            // console.log('ghost peut descendre');
-            allowedDirections.push('bottom');
-            // clearInterval(ghostsApp.forwardInterval);
-        }
-        // Si la case de gauche n'est pas un mur
-        leftCell = target.previousSibling;
-        if (leftCell.classList.contains('road')) {
-            // x chances de turnLeft
-            allowedDirections.push('left');
-            // console.log('ghost peut aller à gauche');
-        }
-        // Si la case de droite n'est pas un mur
-        rightCell = target.nextSibling;
-        if (rightCell.classList.contains('road')) {
-            // x chances de turnRight
-            allowedDirections.push('right');
-            // console.log('ghost peut aller à droite');
-        }
-
-
-        // Préciser la direction actuelle et son opposée
-        let currentDirection = ghostsApp.direction;
-        let oppositeDirection = ghostsApp.getOppositeDirection(currentDirection);
-        // Recenser toutes les directions possibles 
-        let otherDirections = allowedDirections.filter(direction => direction !== currentDirection && direction !== oppositeDirection);
-        let position3 = otherDirections[0] ? otherDirections[0] : null;
-        let position4 = otherDirections[1] ? otherDirections[1] : null;
-        console.log('otherDirections', otherDirections);
-        // Appeler determinesProbability
-        let newDirection = ghostsApp.determinesProbability(currentDirection, oppositeDirection, position3, position4);
-        console.log('newDirection', newDirection);
+        
+        ghostsApp.ghost = movementsApp.moveForward(ghostsApp.ghost, ghostsApp.direction, ghostsApp.forwardInterval, 'ghost');
     },
 
     /**
      * 
-     * @param {*} direction1 direction actuelle
-     * @param {*} direction2 direction opposée
-     * @param {*} direction3 autre direction disponible
-     * @param {*} direction4 autre direction disponible
-     * @returns 
+     * @param {*} target Node element, Pacman or Ghost
+     * @returns Array of directions
      */
-    determinesProbability: (direction1, direction2, direction3, direction4) => {
-        let randomNumber = Math.floor(Math.random() * (100 - 1 + 1) + 1);
-        
-        if (randomNumber < 50) {
-            return direction1; // continue tout droit 50%
-        } else if (randomNumber < 60) {
-            return direction2; // demi-tour 10%
-        } else if (randomNumber < 80 && direction3) {
-            return direction3; // tourne 20%
-        } else if (randomNumber < 101 && direction4) {
-            return direction4; // tourne aussi 20%
-        } else {
-            return direction1; // si pas d'autre direction disponible, continue tout droit
+    checkRoad: (target) => {
+        let allowedDirections = [];
+
+        // if top cell isn't a wall
+        let colNb = Object.values(target.classList).find(className => className.match(/^col[0-9]+$/));
+        let rowNb = target.closest('.row').previousSibling.id;
+        topCell = document.querySelector('#' + rowNb + ' .' + colNb);
+        if (topCell.classList.contains('road')) {
+            allowedDirections.push('top');
         }
+
+        // if bottom cell isn't a wall
+        colNb = Object.values(target.classList).find(className => className.match(/^col[0-9]+$/));
+        rowNb = target.closest('.row').nextSibling.id;
+        bottomCell = document.querySelector('#' + rowNb + ' .' + colNb);
+        if (bottomCell.classList.contains('road')) {
+            allowedDirections.push('bottom');
+        }
+
+        // if left cell isn't a wall
+        leftCell = target.previousSibling;
+        if (leftCell.classList.contains('road')) {
+            allowedDirections.push('left');
+        }
+
+        // if right cell isn't a wall
+        rightCell = target.nextSibling;
+        if (rightCell.classList.contains('road')) {
+            allowedDirections.push('right');
+        }
+
+        return allowedDirections;
     },
 
+    /**
+     * 
+     * @param {Array} allowedDirections 
+     * @returns {String} direction
+     */
+    determinesProbability: (allowedDirections) => {       
+        // Precise current direction and its opposite
+        let currentDirection = ghostsApp.direction;
+        let oppositeDirection = ghostsApp.getOppositeDirection(currentDirection);
+        
+        // Determines other possible directions
+        let otherDirections = allowedDirections.filter(direction => direction !== currentDirection && direction !== oppositeDirection);
+        let direction3 = otherDirections[0] ? otherDirections[0] : null;
+        let direction4 = otherDirections[1] ? otherDirections[1] : null;
+
+        let randomNumber = Math.floor(Math.random() * (100 - 0 + 1) + 0); // from 0 to 100 (both included)
+
+        if (allowedDirections.includes(currentDirection)) { // if current direction is allowed (no wall)
+            if (randomNumber < 67) {
+                return currentDirection; // 67% keeps current direction
+            } else if (randomNumber < 70) {
+                return oppositeDirection; // 3% does a U-turn
+            } else if (randomNumber < 85 && direction3) {
+                return direction3; // 15% turns
+            } else if (randomNumber < 101 && direction4) {
+                return direction4; // 15% turns
+            } else {
+                return currentDirection; // if no other options, keeps current direction
+            }
+        } else { // if current direction leads to a wall
+            if (randomNumber < 6 || (!direction3 && ! direction4)) {
+                return oppositeDirection; // 6% does a U-turn
+            } else if (randomNumber < 53 && direction3) {
+                return direction3; // 47% turns
+            } else if (randomNumber < 101 && direction4) {
+                return direction4; // 47% turns
+            } else if (direction3) {
+                return direction3; // if no other options, turns to direction3 (if exists)
+            } else {
+                return oppositeDirection; // does a U-turn
+            }
+        }
+
+    },
+
+    /**
+     * 
+     * @param {String} currentDirection 
+     * @returns {String}
+     */
     getOppositeDirection: (currentDirection) => {
         if (currentDirection === 'top') {
             return 'bottom';

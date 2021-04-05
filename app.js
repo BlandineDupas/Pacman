@@ -22,7 +22,7 @@ let app = {
     init: () => {
         boardApp.init();
         ghostsApp.init();
-        pacmanApp.init();
+        // pacmanApp.init();
         app.updateNbFood();
         app.timerInterval = setInterval(app.updateTimer, 1000);
     },
