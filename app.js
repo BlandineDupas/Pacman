@@ -4,7 +4,7 @@ let app = {
     score: 0,
     scoreSpan: document.querySelector('#score span'),
     nbFood: null,
-    speed: 150,
+    speed: 200,
     timer: {
         'minutes': 0,
         'seconds': 0,
@@ -13,6 +13,8 @@ let app = {
 
     // TODO - en cours - créer un fantôme
     // TODO - en cours - gérer des mouvements aléatoires de fantôme
+    // TODO faire des nourritures plus grosses
+    // TODO permettre au pacman de tuer un fantôme
     // TODO améliorer le design
     // TODO ---/!\---- DOCUMENTER LES FONCTIONS ---/!\----
 
@@ -23,8 +25,6 @@ let app = {
         pacmanApp.init();
         app.updateNbFood();
         app.timerInterval = setInterval(app.updateTimer, 1000);
-        pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
-        ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
     },
 
     updateScore: () => {

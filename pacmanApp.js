@@ -8,6 +8,7 @@ let pacmanApp = {
     init: () => {
         pacmanApp.createPacman();
         document.addEventListener('keyup', pacmanApp.handlePacmanTurn);
+        pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
     },
 
     createPacman: () => {
@@ -25,14 +26,15 @@ let pacmanApp = {
 
     handlePacmanTurn: (evt) => {
         if (evt.key === 'ArrowUp') {
-            pacmanApp.direction = movementsApp.turnTop(pacmanApp.pacman);
+            pacmanApp.direction = movementsApp.turn(pacmanApp.pacman, 'top');
         } else if (evt.key === 'ArrowDown') {
-            pacmanApp.direction = movementsApp.turnBottom(pacmanApp.pacman);
+            pacmanApp.direction = movementsApp.turn(pacmanApp.pacman, 'bottom');
         } else if (evt.key === 'ArrowRight') {
-            pacmanApp.direction = movementsApp.turnRight(pacmanApp.pacman);
+            pacmanApp.direction = movementsApp.turn(pacmanApp.pacman, 'right');
         } else if (evt.key === 'ArrowLeft') {
-            pacmanApp.direction = movementsApp.turnLeft(pacmanApp.pacman);
+            pacmanApp.direction = movementsApp.turn(pacmanApp.pacman, 'left');
         }
+        
         // clear to prevents addition of intervals
         clearInterval(pacmanApp.forwardInterval);
         // relaunch interval (necessary when a wall stopped it)

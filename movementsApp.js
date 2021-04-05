@@ -6,6 +6,17 @@ let movementsApp = {
         //
     },
 
+    /**
+     * Makes the target move forward by changing div classname & id
+     * Clear interval if target can't move in the given direction (wall...)
+     * return new location of target (or the same if can't move...)
+     * 
+     * @param {node} target Ghost or Pacman who wants to move
+     * @param {String} targetDirection current direction of target
+     * @param {*} targetInterval interval to clear if necessary
+     * @param {String} targetId identity of target (pacman, ghost1, ghost2...)
+     * @returns 
+     */
     moveForward: (target, targetDirection, targetInterval, targetId) => {
         let newTarget;
 
@@ -60,31 +71,28 @@ let movementsApp = {
         }
     },
 
-    turnTop: (target) => {
-        target.classList.remove('to-bottom', 'to-right','to-left')
-        target.classList.add('to-top');
+    /**
+     * Makes the target turn in the chosen direction by changing div classnames
+     * 
+     * @param {node} target Pacman or Ghost who wants to move
+     * @param {String} direction new direction to take
+     * @returns 
+     */
+    turn: (target, direction) => {
+        const directions = [
+            'top',
+            'bottom',
+            'left',
+            'right'
+        ];
 
-        return 'top';
-    },
+        const directionsToRemove = directions.filter(dir => dir !== direction);
+        const directionToAdd = direction;
+        console.log(directionsToRemove, directionToAdd);
 
-    turnBottom: (target) => {
-        target.classList.remove('to-top', 'to-right','to-left')
-        target.classList.add('to-bottom');
+        target.classList.remove('to-' + directionsToRemove[0], 'to-' + directionsToRemove[1],'to-' + directionsToRemove[2])
+        target.classList.add('to-' + directionToAdd);
 
-        return 'bottom';
-    },
-
-    turnRight: (target) => {
-        target.classList.remove('to-top', 'to-bottom','to-left')
-        target.classList.add('to-right');
- 
-        return 'right';
-    },
-
-    turnLeft: (target) => {
-        target.classList.remove('to-top', 'to-bottom', 'to-right')
-        target.classList.add('to-left');
-  
-        return 'left';
+        return direction;
     }
 }
