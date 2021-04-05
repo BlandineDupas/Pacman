@@ -6,6 +6,7 @@ let boardApp = {
     // Methods
     // Methods
     init: function () {
+        boardApp.clearBoard();
         boardApp.loadBoard();
     },
 
@@ -57,5 +58,9 @@ let boardApp = {
                 }
             }
         }
+    },
+
+    clearBoard: () => {
+        boardApp.board.innerHTML = '';
     }
 }

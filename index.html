@@ -11,13 +11,12 @@
 <body>
     <header>
         <h1>Pacman</h1>
-        <p>Score : <span id="score">0</span></p>
+        <p id="score">Score : <span>0</span></p>
+        <p id="timer">Temps : <span>0:00</span></p>
     </header>
     <main>
         <div id="winMessage" class="d-none">
-            <p>Vous avez</p>
-            <p>GAGN&#201;</p>
-            <p>!!!</p>
+            <p id="exit">Recommencer</p>
         </div>
         <section id="board">
         </section>
@@ -25,6 +24,9 @@
 
     <script type="text/javascript" src="datas.js"></script>
     <script type="text/javascript" src="boardApp.js"></script>
+    <script type="text/javascript" src="movementsApp.js"></script>
+    <script type="text/javascript" src="ghostsApp.js"></script>
+    <script type="text/javascript" src="pacmanApp.js"></script>
     <script type="text/javascript" src="app.js"></script>
 </body>
 </html>

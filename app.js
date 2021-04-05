@@ -1,153 +1,115 @@
 let app = {
     // Properties
-    pacman: null,
-    direction: 'left',
-    forwardInterval: null,
+    timerInterval: null,
     score: 0,
-    scoreSpan: document.getElementById('score'),
+    scoreSpan: document.querySelector('#score span'),
     nbFood: null,
+    speed: 200,
+    timer: {
+        'minutes': 0,
+        'seconds': 0,
+    },
+    timerSpan: document.querySelector('#timer span'),
+    winMessage: document.getElementById('winMessage'),
+
+    // TODO permettre au fantôme de tuer le pacman
+    // TODO faire des nourritures plus grosses
+    // TODO permettre au pacman de tuer un fantôme
+    // TODO améliorer le design
+    // TODO gérer plusieurs fantômes
+    // TODO ---/!\---- DOCUMENTER LES FONCTIONS ---/!\----
 
     // Methods
     init: () => {
         boardApp.init();
-        app.updateNbFood();;
-        app.createPacman();
-        document.addEventListener('keyup', app.handleTurn);
-        /*document.addEventListener('keyup', evt => {
-            if (evt.code === 'Space') {
-                app.moveForward();
-            }
-        });*/
-        // setTimeout(app.moveForward, 1000);
-        app.forwardInterval = setInterval(app.moveForward, 500);
-    },
-
-    createPacman: () => {
-        app.pacman = document.querySelector('#row15 .col9');
-        app.pacman.setAttribute('id', 'pacman');
-        app.pacman.classList.add('pacman-left');
-    },
-
-    moveForward: () => {
-        if (app.pacman.firstChild && app.pacman.firstChild.classList.contains('food')) {
-            app.eatFood();
-        }
-
-        let newPacman;
-
-        if (app.pacman.classList.contains('pacman-left')) {
-            // Can't go out of board but can pass to the other side
-            if (!app.pacman.previousSibling) {
-                // find the last div of the current row
-                let colNb = Object.values(app.pacman.closest('.row').lastChild.classList).find(className => className.match(/^col[0-9]+$/));
-                let rowNb = app.pacman.closest('.row').id;
-                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-            } else {
-                newPacman = app.pacman.previousSibling;
-            }
-        }
-        
-        else if (app.pacman.classList.contains('pacman-right')) {
-            // Can't go out of board but can pass to the other side
-            if (!app.pacman.nextSibling) {
-                // find the first div of the current row
-                let colNb = Object.values(app.pacman.closest('.row').firstChild.classList).find(className => className.match(/^col[0-9]+$/));
-                let rowNb = app.pacman.closest('.row').id;
-                newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-            } else {
-                newPacman = app.pacman.nextSibling;
-            }
-        }
-        
-        else if (app.pacman.classList.contains('pacman-up')) {
-            let colNb = Object.values(app.pacman.classList).find(className => className.match(/^col[0-9]+$/));
-            let rowNb = app.pacman.closest('.row').previousSibling.id;
-            newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-        }
-        
-        else if (app.pacman.classList.contains('pacman-down')) {
-            let colNb = Object.values(app.pacman.classList).find(className => className.match(/^col[0-9]+$/));
-            let rowNb = app.pacman.closest('.row').nextSibling.id;
-            newPacman = document.querySelector('#' + rowNb + ' .' + colNb);
-        }
-
-        // Can't walk on a wall
-        if (!newPacman.classList.contains('wall')) {
-            app.pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right','pacman-left');
-            app.pacman.removeAttribute('id');
-
-            newPacman.classList.add('pacman-' + app.direction);
-            newPacman.setAttribute('id', 'pacman');
-
-            app.pacman = newPacman;
-        } else { // prevents unnecessary treatment
-            clearInterval(app.forwardInterval);
-        }
-    },
-
-    eatFood: () => {
-        app.score += 10;
-        app.pacman.firstChild.remove();
-        
-        app.updateScore();
+        ghostsApp.init();
+        pacmanApp.init();
         app.updateNbFood();
+        app.timerInterval = setInterval(app.updateTimer, 1000);
     },
 
     updateScore: () => {
         app.scoreSpan.textContent = app.score;
     },
 
+    updateTimer: () => {
+        if (app.timer.seconds < 59) {
+            app.timer.seconds++;
+        } else {
+            app.timer.seconds = 0;
+            app.timer.minutes++;
+        }
+        if (app.timer.seconds < 10) {
+            app.timerSpan.textContent = app.timer.minutes + ':0' + app.timer.seconds;
+        } else {
+            app.timerSpan.textContent = app.timer.minutes + ':' + app.timer.seconds;
+        }
+    },
+
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
-            console.log('gagné')
-            app.displayWinMessage();
+            app.displayWinMessage('win');
         }
     },
 
-    displayWinMessage: () => {
-        clearInterval(app.forwardInterval);
-        document.getElementById('winMessage').classList.remove('d-none');
-    },
+    displayWinMessage: (winOrLoose) => {
+        clearInterval(pacmanApp.forwardInterval);
+        clearInterval(app.timerInterval);
+        app.winMessage.innerHTML = '';
+        app.winMessage.classList.remove('d-none');
 
-    handleTurn: (evt) => {
-        if (evt.key === 'ArrowUp') {
-            app.turnUp();
-        } else if (evt.key === 'ArrowDown') {
-            app.turnDown();
-        } else if (evt.key === 'ArrowRight') {
-            app.turnRight();
-        } else if (evt.key === 'ArrowLeft') {
-            app.turnLeft();
+        if (winOrLoose === 'win') {
+            let firstP = document.createElement('p');
+            firstP.textContent = 'Vous avez';
+            let secondP = document.createElement('p');
+            secondP.textContent = 'GAGN\u00C9';
+            let thirdP = document.createElement('p');
+            thirdP.textContent = '!!!';
+            app.winMessage.prepend(firstP, secondP, thirdP);
+        } else {
+            let gameOver = document.createElement('p');
+            gameOver.textContent = 'GAME OVER';
+            let newP = document.createElement('p');
+            newP.textContent = '...';
+            app.winMessage.prepend(gameOver, newP);
         }
-        // clear to prevents addition of intervals
-        clearInterval(app.forwardInterval);
-        // relaunch interval (necessary when a wall stopped it)
-        app.forwardInterval = setInterval(app.moveForward, 500);
+
+        let exitCross = document.createElement('p');
+        exitCross.textContent = 'Recommencer';
+        exitCross.setAttribute('id', 'exit');
+        app.winMessage.appendChild(exitCross);
+        exitCross.addEventListener('click', app.restart);
     },
 
-    turnUp: () => {
-        pacman.classList.remove('pacman-down', 'pacman-right','pacman-left')
-        pacman.classList.add('pacman-up');
-        app.direction = 'up';
-    },
+    restart: () => {
+        // hide win message
+        document.getElementById('winMessage').classList.add('d-none');
+        
+        // suppress pacman
+        document.getElementById('pacman').classList.add('to-left');
+        document.getElementById('pacman').removeAttribute('id');
 
-    turnDown: () => {
-        pacman.classList.remove('pacman-up', 'pacman-right','pacman-left')
-        pacman.classList.add('pacman-down');
-        app.direction = 'down';
-    },
+        // clear all intervals
+        app.clearAllIntervals();
 
-    turnRight: () => {
-        pacman.classList.remove('pacman-up', 'pacman-down','pacman-left')
-        pacman.classList.add('pacman-right');
-        app.direction = 'right';
-    },
-
-    turnLeft: () => {
-        pacman.classList.remove('pacman-up', 'pacman-down', 'pacman-right')
-        pacman.classList.add('pacman-left');
+        // restart initial direction, score, food, timer
         app.direction = 'left';
+        app.score = 0;
+        app.updateScore;
+        app.nbFood = null;
+        app.timer = {
+            'minutes': 0,
+            'seconds': 0,
+        };
+    
+        app.init();
+    },
+
+    clearAllIntervals: () => {
+        clearInterval(ghostsApp.forwardInterval);
+        clearInterval(pacmanApp.forwardInterval);
+        clearInterval(app.timerInterval);
     }
 }
 
