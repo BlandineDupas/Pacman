@@ -62,6 +62,10 @@ let movementsApp = {
             target.removeAttribute('id');
 
             newTarget.classList.add('to-' + targetDirection);
+            if (newTarget.getAttribute('id')) {
+                // TODO allow Pacman to kill a ghost
+                movementsApp.kill(targetId, newTarget.getAttribute('id'));
+            }
             newTarget.setAttribute('id', targetId);
 
             return newTarget;
@@ -93,5 +97,14 @@ let movementsApp = {
         target.classList.add('to-' + directionToAdd);
 
         return direction;
+    },
+
+    kill: (killer, victim) => {
+        if (killer === 'ghost') {
+            app.clearAllIntervals();
+            app.displayWinMessage('loose');
+        } else {
+            // TODO allow Pacman to kill a ghost
+        }
     }
 }

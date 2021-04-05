@@ -132,4 +132,4 @@ let ghostsApp = {
             return 'left';
         }
     }
-} 
+}

@@ -10,19 +10,20 @@ let app = {
         'seconds': 0,
     },
     timerSpan: document.querySelector('#timer span'),
+    winMessage: document.getElementById('winMessage'),
 
-    // TODO - en cours - créer un fantôme
-    // TODO - en cours - gérer des mouvements aléatoires de fantôme
+    // TODO permettre au fantôme de tuer le pacman
     // TODO faire des nourritures plus grosses
     // TODO permettre au pacman de tuer un fantôme
     // TODO améliorer le design
+    // TODO gérer plusieurs fantômes
     // TODO ---/!\---- DOCUMENTER LES FONCTIONS ---/!\----
 
     // Methods
     init: () => {
         boardApp.init();
         ghostsApp.init();
-        // pacmanApp.init();
+        pacmanApp.init();
         app.updateNbFood();
         app.timerInterval = setInterval(app.updateTimer, 1000);
     },
@@ -48,16 +49,36 @@ let app = {
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
-            app.displayWinMessage();
+            app.displayWinMessage('win');
         }
     },
 
-    displayWinMessage: () => {
+    displayWinMessage: (winOrLoose) => {
         clearInterval(pacmanApp.forwardInterval);
         clearInterval(app.timerInterval);
-        document.getElementById('winMessage').classList.remove('d-none');
+        app.winMessage.innerHTML = '';
+        app.winMessage.classList.remove('d-none');
 
-        let exitCross = document.getElementById('exit');
+        if (winOrLoose === 'win') {
+            let firstP = document.createElement('p');
+            firstP.textContent = 'Vous avez';
+            let secondP = document.createElement('p');
+            secondP.textContent = 'GAGN\u00C9';
+            let thirdP = document.createElement('p');
+            thirdP.textContent = '!!!';
+            app.winMessage.prepend(firstP, secondP, thirdP);
+        } else {
+            let gameOver = document.createElement('p');
+            gameOver.textContent = 'GAME OVER';
+            let newP = document.createElement('p');
+            newP.textContent = '...';
+            app.winMessage.prepend(gameOver, newP);
+        }
+
+        let exitCross = document.createElement('p');
+        exitCross.textContent = 'Recommencer';
+        exitCross.setAttribute('id', 'exit');
+        app.winMessage.appendChild(exitCross);
         exitCross.addEventListener('click', app.restart);
     },
 
@@ -69,10 +90,11 @@ let app = {
         document.getElementById('pacman').classList.add('to-left');
         document.getElementById('pacman').removeAttribute('id');
 
-        // restart initial direction, interval, score
+        // clear all intervals
+        app.clearAllIntervals();
+
+        // restart initial direction, score, food, timer
         app.direction = 'left';
-        app.forwardInterval = null;
-        app.timerInterval = null;
         app.score = 0;
         app.updateScore;
         app.nbFood = null;
@@ -83,6 +105,12 @@ let app = {
     
         app.init();
     },
+
+    clearAllIntervals: () => {
+        clearInterval(ghostsApp.forwardInterval);
+        clearInterval(pacmanApp.forwardInterval);
+        clearInterval(app.timerInterval);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
