@@ -58,17 +58,19 @@ let movementsApp = {
 
         // Can't walk on a wall
         if (!newTarget.classList.contains('wall')) {
-            target.classList.remove('to-top', 'to-bottom', 'to-right','to-left');
-            target.removeAttribute('id');
-
-            newTarget.classList.add('to-' + targetDirection);
-            if (newTarget.getAttribute('id')) {
-                // TODO allow Pacman to kill a ghost
-                movementsApp.kill(targetId, newTarget.getAttribute('id'));
+            let fightResult = null;
+            if (newTarget.getAttribute('id')) { // meeting case
+                fightResult = movementsApp.kill(targetId);
             }
-            newTarget.setAttribute('id', targetId);
+            if (!newTarget.getAttribute('id') || fightResult) {
+                target.classList.remove('to-top', 'to-bottom', 'to-right','to-left');
+                target.removeAttribute('id');
+    
+                newTarget.classList.add('to-' + targetDirection);
+                newTarget.setAttribute('id', targetId);
 
-            return newTarget;
+                return newTarget;
+            }
         } else { // prevents unnecessary treatment
             clearInterval(targetInterval);
             return target;
@@ -99,15 +101,40 @@ let movementsApp = {
         return direction;
     },
 
-    kill: (killer, victim) => {
-        app.clearAllIntervals();
-        app.displayEndMessage('loose');
+    /**
+     * Oppose ghost and pacman
+     * if pacman has power he wins
+     * else ghost wins
+     * 
+     * @param {*} firstOpponent active cell (pacman or ghost)
+     * @returns firstOpponent if he has won, null if he has lost
+     */
+    kill: (firstOpponent) => {
+        if (pacmanApp.power) { // if pacman has the power
+            // Kill the ghost by removing all its attributes and clearing his move interval
+            ghostsApp.ghost.classList.remove('to-' + ghostsApp.direction);
+            ghostsApp.ghost.removeAttribute('id');
+            ghostsApp.ghost = null;
+            clearInterval(ghostsApp.forwardInterval);
 
-        // if (killer === 'ghost') {
-        //     app.clearAllIntervals();
-        //     app.displayWinMessage('loose');
-        // } else {
-        //     // TODO allow Pacman to kill a ghost
-        // }
+            app.updateScore(50);
+
+            // return something in order to end moveForward method
+            if (firstOpponent === 'pacman') {
+                return pacmanApp.pacman
+            } else {
+                return null;
+            }
+        } else {
+            app.clearAllIntervals();
+            app.displayEndMessage('loose'); 
+
+            // return something in order to end moveForward method
+            if (firstOpponent === 'ghost') {
+                return ghostsApp.ghost
+            } else {
+                return null;
+            }
+        }
     }
 }

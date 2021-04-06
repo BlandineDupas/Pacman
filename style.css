@@ -100,6 +100,10 @@ header h1 {
     padding: 1rem;
 }
 
+#board.pacman-power {
+    background-color: green;
+}
+
 .row {
     height: 4.8%;
     display: flex;
@@ -123,6 +127,11 @@ header h1 {
     height: 50%;
     margin: auto;
     background-color: white;
+}
+
+.food--big {
+    width: 180%;
+    height: 200%;
 }
 
 #pacman {

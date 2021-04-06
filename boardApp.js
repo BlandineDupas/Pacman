@@ -1,7 +1,7 @@
 let boardApp = {
     // Properties
     board: document.getElementById('board'),
-    map: datas.map,
+    map: datas.map2,
 
     // Methods
     init: function () {
@@ -67,11 +67,14 @@ let boardApp = {
                     // console.log('road');
                     let newRoad = boardApp.createRoad(columnIndex);
                     newRow.appendChild(newRoad);
-                } if (rowMapStr[columnIndex] === 'f') {
+                } if (rowMapStr[columnIndex].toLowerCase() === 'f') {
                     // console.log('food');
                     let newRoad = boardApp.createRoad(columnIndex);
                     newRow.appendChild(newRoad);
                     let newFood = boardApp.createFood();
+                    if (rowMapStr[columnIndex] === 'F') {
+                        newFood.classList.add('food--big')
+                    }
                     newRoad.appendChild(newFood);
                 }
             }
