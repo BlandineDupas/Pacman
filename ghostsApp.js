@@ -131,5 +131,14 @@ let ghostsApp = {
         } else if (currentDirection === 'right') {
             return 'left';
         }
+    },
+
+    /**
+     * Reset ghostApp properties initial values
+     */
+    reset: () => {
+        ghostsApp.ghost = null;
+        ghostsApp.direction = 'left';
+        ghostsApp.forwardInterval = null;
     }
 }

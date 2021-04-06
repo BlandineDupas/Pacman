@@ -17,13 +17,25 @@ let pacmanApp = {
         pacmanApp.pacman.classList.add('to-left');
     },
 
+
+    /**
+     * Assign a new cell to pacman (moveForward)
+     * Eat food on the new cell
+     */
     pacmanMove: () => {
+        pacmanApp.pacman = movementsApp.moveForward(pacmanApp.pacman, pacmanApp.direction, pacmanApp.forwardInterval, 'pacman');
+        
+        // eat food
         if (pacmanApp.pacman.firstChild && pacmanApp.pacman.firstChild.classList.contains('food')) {
             pacmanApp.eatFood();
         }
-        pacmanApp.pacman = movementsApp.moveForward(pacmanApp.pacman, pacmanApp.direction, pacmanApp.forwardInterval, 'pacman');
     },
 
+    /**
+     * Event on arrow keys to turn the pacman
+     * 
+     * @param {KeyboardEvent} evt 
+     */
     handlePacmanTurn: (evt) => {
         if (evt.key === 'ArrowUp') {
             pacmanApp.direction = movementsApp.turn(pacmanApp.pacman, 'top');
@@ -41,11 +53,22 @@ let pacmanApp = {
         pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
     },
 
+    /**
+     * Remove food and update score
+     */
     eatFood: () => {
-        app.score += 10;
         pacmanApp.pacman.firstChild.remove();
         
-        app.updateScore();
+        app.updateScore(10);
         app.updateNbFood();
+    },
+
+    /**
+     * Reset pacmanApp properties initial values
+     */
+    reset: () => {
+        pacmanApp.pacman = null;
+        pacmanApp.direction = 'left';
+        pacmanApp.forwardInterval = null;
     }
 }

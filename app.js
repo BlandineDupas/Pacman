@@ -12,7 +12,6 @@ let app = {
     timerSpan: document.querySelector('#timer span'),
     winMessage: document.getElementById('winMessage'),
 
-    // TODO permettre au fantôme de tuer le pacman
     // TODO faire des nourritures plus grosses
     // TODO permettre au pacman de tuer un fantôme
     // TODO améliorer le design
@@ -28,10 +27,18 @@ let app = {
         app.timerInterval = setInterval(app.updateTimer, 1000);
     },
 
-    updateScore: () => {
+    /**
+     * Update score and display
+     * @param {Number} nb number of points to add
+     */
+    updateScore: (nb) => {
+        app.score += nb;
         app.scoreSpan.textContent = app.score;
     },
 
+    /**
+     * Update timer values and display them
+     */
     updateTimer: () => {
         if (app.timer.seconds < 59) {
             app.timer.seconds++;
@@ -46,6 +53,9 @@ let app = {
         }
     },
 
+    /**
+     * Update app property nbFood to eventually display the win message
+     */
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
@@ -53,13 +63,16 @@ let app = {
         }
     },
 
+    /**
+     * Display an end of game message
+     * 
+     * @param {String} winOrLoose 'win' or 'loose'
+     */
     displayWinMessage: (winOrLoose) => {
-        clearInterval(pacmanApp.forwardInterval);
-        clearInterval(app.timerInterval);
         app.winMessage.innerHTML = '';
-        app.winMessage.classList.remove('d-none');
+        app.winMessage.classList.remove('d-none'); // display message
 
-        if (winOrLoose === 'win') {
+        if (winOrLoose === 'win') { // create a win message
             let firstP = document.createElement('p');
             firstP.textContent = 'Vous avez';
             let secondP = document.createElement('p');
@@ -67,7 +80,7 @@ let app = {
             let thirdP = document.createElement('p');
             thirdP.textContent = '!!!';
             app.winMessage.prepend(firstP, secondP, thirdP);
-        } else {
+        } else {// create a game over message
             let gameOver = document.createElement('p');
             gameOver.textContent = 'GAME OVER';
             let newP = document.createElement('p');
@@ -75,41 +88,49 @@ let app = {
             app.winMessage.prepend(gameOver, newP);
         }
 
+        // Create component for restart the game
         let exitCross = document.createElement('p');
         exitCross.textContent = 'Recommencer';
         exitCross.setAttribute('id', 'exit');
         app.winMessage.appendChild(exitCross);
-        exitCross.addEventListener('click', app.restart);
+        exitCross.addEventListener('click', app.start);
     },
 
-    restart: () => {
+    /**
+     * Reset all initial values and start the game
+     */
+    start: () => {
         // hide win message
         document.getElementById('winMessage').classList.add('d-none');
         
-        // suppress pacman
-        document.getElementById('pacman').classList.add('to-left');
-        document.getElementById('pacman').removeAttribute('id');
+        // reset app, pacman and ghost
+        app.reset()
+        ghostsApp.reset();
+        pacmanApp.reset();
 
-        // clear all intervals
-        app.clearAllIntervals();
-
-        // restart initial direction, score, food, timer
-        app.direction = 'left';
-        app.score = 0;
-        app.updateScore;
-        app.nbFood = null;
-        app.timer = {
-            'minutes': 0,
-            'seconds': 0,
-        };
-    
         app.init();
     },
 
+    /**
+     * Clear all intervals on the app
+     */
     clearAllIntervals: () => {
         clearInterval(ghostsApp.forwardInterval);
         clearInterval(pacmanApp.forwardInterval);
         clearInterval(app.timerInterval);
+    },
+
+    /**
+     * Reset app properties initial values
+     */
+    reset: () => {
+        app.timerInterval = null
+        app.score = 0;
+        app.nbFood = null;
+        app.timer = {
+            'minutes': 0,
+            'seconds': 0,
+        };    
     }
 }
 
