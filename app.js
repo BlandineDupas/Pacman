@@ -11,6 +11,7 @@ let app = {
     },
     timerSpan: document.querySelector('#timer span'),
     winMessage: document.getElementById('winMessage'),
+    startButton: document.getElementById('start'),
 
     // TODO faire des nourritures plus grosses
     // TODO permettre au pacman de tuer un fantôme
@@ -24,6 +25,8 @@ let app = {
         ghostsApp.init();
         pacmanApp.init();
         app.updateNbFood();
+        app.startButton = document.getElementById('start');
+        app.startButton.addEventListener('click', app.start)
         app.timerInterval = setInterval(app.updateTimer, 1000);
     },
 
@@ -93,22 +96,19 @@ let app = {
         exitCross.textContent = 'Recommencer';
         exitCross.setAttribute('id', 'exit');
         app.winMessage.appendChild(exitCross);
-        exitCross.addEventListener('click', app.start);
+        exitCross.addEventListener('click', app.reset);
     },
 
     /**
-     * Reset all initial values and start the game
+     * Start the game by initialisation of intervals
      */
     start: () => {
-        // hide win message
-        document.getElementById('winMessage').classList.add('d-none');
-        
-        // reset app, pacman and ghost
-        app.reset()
-        ghostsApp.reset();
-        pacmanApp.reset();
+        // Starts automatic move
+        pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
+        ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
 
-        app.init();
+        // hide win message and start button
+        app.startButton.classList.add('d-none');
     },
 
     /**
@@ -122,15 +122,29 @@ let app = {
 
     /**
      * Reset app properties initial values
+     * Reset pacman and ghost
+     * Hide message
+     * Load app
      */
     reset: () => {
+        // Reset app properties
         app.timerInterval = null
         app.score = 0;
         app.nbFood = null;
         app.timer = {
             'minutes': 0,
             'seconds': 0,
-        };    
+        };
+
+        // Reset ghostApp and pacmanApp properties
+        ghostsApp.reset();
+        pacmanApp.reset();
+
+        // Hide message
+        app.winMessage.classList.add('d-none');
+
+        // Restart app
+        app.init();
     }
 }
 

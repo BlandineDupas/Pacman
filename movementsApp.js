@@ -100,11 +100,14 @@ let movementsApp = {
     },
 
     kill: (killer, victim) => {
-        if (killer === 'ghost') {
-            app.clearAllIntervals();
-            app.displayWinMessage('loose');
-        } else {
-            // TODO allow Pacman to kill a ghost
-        }
+        app.clearAllIntervals();
+        app.displayWinMessage('loose');
+
+        // if (killer === 'ghost') {
+        //     app.clearAllIntervals();
+        //     app.displayWinMessage('loose');
+        // } else {
+        //     // TODO allow Pacman to kill a ghost
+        // }
     }
 }
