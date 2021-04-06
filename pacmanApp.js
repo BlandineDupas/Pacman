@@ -7,7 +7,7 @@ let pacmanApp = {
     // Methods
     init: () => {
         pacmanApp.createPacman();
-        document.addEventListener('keyup', pacmanApp.handlePacmanTurn);
+        // document.addEventListener('keyup', pacmanApp.handlePacmanTurn);
         // pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
     },
 
@@ -68,6 +68,7 @@ let pacmanApp = {
      */
     reset: () => {
         pacmanApp.pacman = null;
+        document.removeEventListener('keyup', pacmanApp.handlePacmanTurn);
         pacmanApp.direction = 'left';
         pacmanApp.forwardInterval = null;
     }

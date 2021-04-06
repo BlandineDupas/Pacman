@@ -10,7 +10,7 @@ let app = {
         'seconds': 0,
     },
     timerSpan: document.querySelector('#timer span'),
-    winMessage: document.getElementById('winMessage'),
+    endMessage: document.getElementById('endMessage'),
     startButton: document.getElementById('start'),
 
     // TODO faire des nourritures plus grosses
@@ -27,7 +27,6 @@ let app = {
         app.updateNbFood();
         app.startButton = document.getElementById('start');
         app.startButton.addEventListener('click', app.start)
-        app.timerInterval = setInterval(app.updateTimer, 1000);
     },
 
     /**
@@ -62,7 +61,8 @@ let app = {
     updateNbFood: () => {
         app.nbFood = Object.keys(document.querySelectorAll('.food')).length;
         if (app.nbFood === 0) {
-            app.displayWinMessage('win');
+            app.clearAllIntervals();
+            app.displayEndMessage('win');
         }
     },
 
@@ -71,9 +71,9 @@ let app = {
      * 
      * @param {String} winOrLoose 'win' or 'loose'
      */
-    displayWinMessage: (winOrLoose) => {
-        app.winMessage.innerHTML = '';
-        app.winMessage.classList.remove('d-none'); // display message
+    displayEndMessage: (winOrLoose) => {
+        app.endMessage.innerHTML = '';
+        app.endMessage.classList.remove('d-none'); // display message
 
         if (winOrLoose === 'win') { // create a win message
             let firstP = document.createElement('p');
@@ -82,20 +82,20 @@ let app = {
             secondP.textContent = 'GAGN\u00C9';
             let thirdP = document.createElement('p');
             thirdP.textContent = '!!!';
-            app.winMessage.prepend(firstP, secondP, thirdP);
+            app.endMessage.prepend(firstP, secondP, thirdP);
         } else {// create a game over message
             let gameOver = document.createElement('p');
             gameOver.textContent = 'GAME OVER';
             let newP = document.createElement('p');
             newP.textContent = '...';
-            app.winMessage.prepend(gameOver, newP);
+            app.endMessage.prepend(gameOver, newP);
         }
 
         // Create component for restart the game
         let exitCross = document.createElement('p');
         exitCross.textContent = 'Recommencer';
         exitCross.setAttribute('id', 'exit');
-        app.winMessage.appendChild(exitCross);
+        app.endMessage.appendChild(exitCross);
         exitCross.addEventListener('click', app.reset);
     },
 
@@ -103,11 +103,15 @@ let app = {
      * Start the game by initialisation of intervals
      */
     start: () => {
-        // Starts automatic move
+        // Starts automatic move and timer
         pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
         ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
+        app.timerInterval = setInterval(app.updateTimer, 1000);
 
-        // hide win message and start button
+        // add event listener on arrows key
+        document.addEventListener('keyup', pacmanApp.handlePacmanTurn);
+
+        // hide start button
         app.startButton.classList.add('d-none');
     },
 
@@ -141,7 +145,7 @@ let app = {
         pacmanApp.reset();
 
         // Hide message
-        app.winMessage.classList.add('d-none');
+        app.endMessage.classList.add('d-none');
 
         // Restart app
         app.init();

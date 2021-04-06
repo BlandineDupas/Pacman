@@ -101,7 +101,7 @@ let movementsApp = {
 
     kill: (killer, victim) => {
         app.clearAllIntervals();
-        app.displayWinMessage('loose');
+        app.displayEndMessage('loose');
 
         // if (killer === 'ghost') {
         //     app.clearAllIntervals();
