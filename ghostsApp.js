@@ -133,6 +133,9 @@ let ghostsApp = {
         }
     },
 
+    /**
+     * Reset ghostApp properties initial values
+     */
     reset: () => {
         ghostsApp.ghost = null;
         ghostsApp.direction = 'left';
