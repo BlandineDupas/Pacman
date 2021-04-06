@@ -86,9 +86,9 @@ let app = {
         // hide win message
         document.getElementById('winMessage').classList.add('d-none');
         
-        // suppress pacman
-        document.getElementById('pacman').classList.add('to-left');
-        document.getElementById('pacman').removeAttribute('id');
+        // rest pacman and ghost
+        ghostsApp.reset();
+        pacmanApp.reset();
 
         // clear all intervals
         app.clearAllIntervals();

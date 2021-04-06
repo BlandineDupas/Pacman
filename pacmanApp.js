@@ -47,5 +47,11 @@ let pacmanApp = {
         
         app.updateScore();
         app.updateNbFood();
+    },
+
+    reset: () => {
+        pacmanApp.pacman = null;
+        pacmanApp.direction = 'left';
+        pacmanApp.forwardInterval = null;
     }
 }

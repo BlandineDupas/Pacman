@@ -131,5 +131,11 @@ let ghostsApp = {
         } else if (currentDirection === 'right') {
             return 'left';
         }
+    },
+
+    reset: () => {
+        ghostsApp.ghost = null;
+        ghostsApp.direction = 'left';
+        ghostsApp.forwardInterval = null;
     }
 }
