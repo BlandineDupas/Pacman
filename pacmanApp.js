@@ -3,6 +3,7 @@ let pacmanApp = {
     pacman: null,
     direction: 'left',
     forwardInterval: null,
+    power: false,
 
     // Methods
     init: () => {
@@ -57,9 +58,31 @@ let pacmanApp = {
      * Remove food and update score
      */
     eatFood: () => {
-        pacmanApp.pacman.firstChild.remove();
-        
-        app.updateScore(10);
+        if (pacmanApp.pacman.firstChild.classList.contains('food--big')) {
+            app.updateScore(20);
+            pacmanApp.power = true;
+            boardApp.board.classList.add('pacman-power');
+
+            // add a blinking effect to alert player during power time
+            let blink = setInterval(() => {
+                boardApp.board.classList.remove('pacman-power'); 
+            }, 500);
+
+            let blink2 = setInterval(() => {
+                boardApp.board.classList.add('pacman-power');  
+            }, 1000);
+            // 5s later, pacman loose his power
+            setTimeout(() => {
+                pacmanApp.power = false;
+                boardApp.board.classList.remove('pacman-power');
+                clearInterval(blink);
+                clearInterval(blink2);
+            }, 20000)
+        } else {
+            app.updateScore(10);
+        }
+
+        pacmanApp.pacman.firstChild.remove();       
         app.updateNbFood();
     },
 
@@ -71,5 +94,6 @@ let pacmanApp = {
         document.removeEventListener('keyup', pacmanApp.handlePacmanTurn);
         pacmanApp.direction = 'left';
         pacmanApp.forwardInterval = null;
+        power = false;
     }
 }
