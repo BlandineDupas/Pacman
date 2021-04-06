@@ -47,7 +47,6 @@ header h1 {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* padding-bottom: 20%; */
     font-weight: bold;
     font-size: 3em;
     color: yellow;
@@ -59,7 +58,20 @@ header h1 {
     margin: 1rem 0;
 }
 
-#winMessage.d-none {
+
+#start {
+    position: absolute;
+    top: 320px;
+    left: 300px;
+    width: 200px;
+    height: 100px;
+    font-size: 1.8em;
+    background-color: yellow;
+    border: 10px outset orange;
+}
+
+#winMessage.d-none,
+#start.d-none {
     display: none;
 }
 
@@ -76,6 +88,7 @@ header h1 {
 }
 
 #board {
+    position: relative;
     width: 800px;
     height: 800px;
     background-color: black;
@@ -146,4 +159,3 @@ header h1 {
 #ghost {
     background-color: red;
 }
-
