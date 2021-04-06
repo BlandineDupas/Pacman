@@ -13,8 +13,6 @@ let app = {
     endMessage: document.getElementById('endMessage'),
     startButton: document.getElementById('start'),
 
-    // TODO faire des nourritures plus grosses
-    // TODO permettre au pacman de tuer un fantôme
     // TODO améliorer le design
     // TODO gérer plusieurs fantômes
     // TODO ---/!\---- DOCUMENTER LES FONCTIONS ---/!\----

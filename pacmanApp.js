@@ -8,8 +8,6 @@ let pacmanApp = {
     // Methods
     init: () => {
         pacmanApp.createPacman();
-        // document.addEventListener('keyup', pacmanApp.handlePacmanTurn);
-        // pacmanApp.forwardInterval = setInterval(pacmanApp.pacmanMove, app.speed);
     },
 
     createPacman: () => {
@@ -77,7 +75,7 @@ let pacmanApp = {
                 boardApp.board.classList.remove('pacman-power');
                 clearInterval(blink);
                 clearInterval(blink2);
-            }, 20000)
+            }, 5000)
         } else {
             app.updateScore(10);
         }

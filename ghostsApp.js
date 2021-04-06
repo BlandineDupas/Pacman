@@ -7,7 +7,6 @@ let ghostsApp = {
     // Methods
     init: () => {
         ghostsApp.createGhost();
-        // ghostsApp.forwardInterval = setInterval(ghostsApp.ghostMove, app.speed);
     },
     
     createGhost: () => {
