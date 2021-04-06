@@ -37,7 +37,7 @@ header h1 {
     text-align: right;
 }
 
-#winMessage {
+#endMessage {
     position: fixed;
     left: 30%;
     top: 30%;
@@ -54,7 +54,7 @@ header h1 {
     border-radius: 20px;
 }
 
-#winMessage p {
+#endMessage p {
     margin: 1rem 0;
 }
 
@@ -70,7 +70,7 @@ header h1 {
     border: 10px outset orange;
 }
 
-#winMessage.d-none,
+#endMessage.d-none,
 #start.d-none {
     display: none;
 }
